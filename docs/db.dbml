@@ -1,0 +1,128 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+AssetManagementLog: Log of asset movement and status changes.
+Device: Stores information about IT devices in the system.
+Location: Represents the physical location or premises related to assets.
+ComplianceAudit: Records audits for compliance tracking.
+DeviceAssignment: Track which employee has been assigned to a device.
+Employee: Contains employee details.
+DeviceSoftware: Links devices with software installations.
+Software: Contains details about software available in the system.
+MaintenanceSchedule: Planned maintenance for devices.
+RenewalAlert: Manages renewal alerts for software licenses and contracts.
+VendorContract: Details of vendor contracts.
+WarrantyService: Manages details of warranty services for devices.
+'''
+}
+
+Table AssetManagementLog {
+    id INTEGER [primary key]
+    device_id INTEGER 
+    from_location_id INTEGER 
+    to_location_id INTEGER 
+    log_date DATE 
+    activity VARCHAR 
+    }
+
+Table Device {
+    id INTEGER [primary key]
+    name VARCHAR 
+    manufacturer VARCHAR 
+    model VARCHAR 
+    purchase_date DATE 
+    warranty_expiry DATE 
+    }
+
+Table Location {
+    id INTEGER [primary key]
+    name VARCHAR 
+    address VARCHAR 
+    country VARCHAR 
+    }
+
+Table ComplianceAudit {
+    id INTEGER [primary key]
+    audit_date DATE 
+    findings VARCHAR 
+    auditor VARCHAR 
+    }
+
+Table DeviceAssignment {
+    id INTEGER [primary key]
+    employee_id INTEGER 
+    device_id INTEGER 
+    start_date DATE 
+    end_date DATE 
+    }
+
+Table Employee {
+    id INTEGER [primary key]
+    first_name VARCHAR 
+    last_name VARCHAR 
+    position VARCHAR 
+    email VARCHAR 
+    }
+
+Table DeviceSoftware {
+    id INTEGER [primary key]
+    device_id INTEGER 
+    software_id INTEGER 
+    installation_date DATE 
+    }
+
+Table Software {
+    id INTEGER [primary key]
+    title VARCHAR 
+    version VARCHAR 
+    license_expiry DATE 
+    vendor VARCHAR 
+    }
+
+Table MaintenanceSchedule {
+    id INTEGER [primary key]
+    device_id INTEGER 
+    scheduled_date DATE 
+    description VARCHAR 
+    }
+
+Table RenewalAlert {
+    id INTEGER [primary key]
+    alert_date DATE 
+    entity_type VARCHAR 
+    entity_id INTEGER 
+    message VARCHAR 
+    }
+
+Table VendorContract {
+    id INTEGER [primary key]
+    vendor_name VARCHAR 
+    contract_start DATE 
+    contract_end DATE 
+    terms VARCHAR 
+    }
+
+Table WarrantyService {
+    id INTEGER [primary key]
+    device_id INTEGER 
+    vendor_contract_id INTEGER 
+    service_date DATE 
+    service_notes VARCHAR 
+    }
+
+
+
+// Relationships
+    Ref: AssetManagementLog.(device_id) < Device.(id)
+    Ref: AssetManagementLog.(from_location_id) < Location.(id)
+    Ref: AssetManagementLog.(to_location_id) < Location.(id)
+    Ref: DeviceAssignment.(device_id) < Device.(id)
+    Ref: DeviceAssignment.(employee_id) < Employee.(id)
+    Ref: DeviceSoftware.(device_id) < Device.(id)
+    Ref: DeviceSoftware.(software_id) < Software.(id)
+    Ref: MaintenanceSchedule.(device_id) < Device.(id)
+    Ref: WarrantyService.(device_id) < Device.(id)
+    Ref: WarrantyService.(vendor_contract_id) < VendorContract.(id)

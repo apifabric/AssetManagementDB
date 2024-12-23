@@ -1,0 +1,110 @@
+{
+    "models": [
+        {
+            "classname": "Device",
+            "code": "class Device(Base):\n    \"\"\"\n    description: Stores information about IT devices in the system.\n    \"\"\"\n    __tablename__ = 'device'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    manufacturer = Column(String)\n    model = Column(String)\n    purchase_date = Column(Date)\n    warranty_expiry = Column(Date)",
+            "sqlite_create": "CREATE TABLE device (\nid INTEGER NOT NULL, \nname VARCHAR, \nmanufacturer VARCHAR, \nmodel VARCHAR, \npurchase_date DATE, \nwarranty_expiry DATE, \nPRIMARY KEY (id)\n)",
+            "description": "Stores information about IT devices in the system.",
+            "name": "device"
+        },
+        {
+            "classname": "Software",
+            "code": "class Software(Base):\n    \"\"\"\n    description: Contains details about software available in the system.\n    \"\"\"\n    __tablename__ = 'software'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    title = Column(String)\n    version = Column(String)\n    license_expiry = Column(Date)\n    vendor = Column(String)",
+            "sqlite_create": "CREATE TABLE software (\nid INTEGER NOT NULL, \ntitle VARCHAR, \nversion VARCHAR, \nlicense_expiry DATE, \nvendor VARCHAR, \nPRIMARY KEY (id)\n)",
+            "description": "Contains details about software available in the system.",
+            "name": "software"
+        },
+        {
+            "classname": "Location",
+            "code": "class Location(Base):\n    \"\"\"\n    description: Represents the physical location or premises related to assets.\n    \"\"\"\n    __tablename__ = 'location'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    address = Column(String)\n    country = Column(String)",
+            "sqlite_create": "CREATE TABLE location (\nid INTEGER NOT NULL, \nname VARCHAR, \naddress VARCHAR, \ncountry VARCHAR, \nPRIMARY KEY (id)\n)",
+            "description": "Represents the physical location or premises related to assets.",
+            "name": "location"
+        },
+        {
+            "classname": "AssetManagementLog",
+            "code": "class AssetManagementLog(Base):\n    \"\"\"\n    description: Log of asset movement and status changes.\n    \"\"\"\n    __tablename__ = 'asset_management_log'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    device_id = Column(Integer, ForeignKey('device.id'))\n    from_location_id = Column(Integer, ForeignKey('location.id'))\n    to_location_id = Column(Integer, ForeignKey('location.id'))\n    log_date = Column(Date)\n    activity = Column(String)",
+            "sqlite_create": "CREATE TABLE asset_management_log (\nid INTEGER NOT NULL, \ndevice_id INTEGER, \nfrom_location_id INTEGER, \nto_location_id INTEGER, \nlog_date DATE, \nactivity VARCHAR, \nPRIMARY KEY (id), \nFOREIGN KEY(device_id) REFERENCES device (id), \nFOREIGN KEY(from_location_id) REFERENCES location (id), \nFOREIGN KEY(to_location_id) REFERENCES location (id)\n)",
+            "description": "Log of asset movement and status changes.",
+            "name": "asset_management_log"
+        },
+        {
+            "classname": "Employee",
+            "code": "class Employee(Base):\n    \"\"\"\n    description: Contains employee details.\n    \"\"\"\n    __tablename__ = 'employee'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    first_name = Column(String)\n    last_name = Column(String)\n    position = Column(String)\n    email = Column(String)",
+            "sqlite_create": "CREATE TABLE employee (\nid INTEGER NOT NULL, \nfirst_name VARCHAR, \nlast_name VARCHAR, \nposition VARCHAR, \nemail VARCHAR, \nPRIMARY KEY (id)\n)",
+            "description": "Contains employee details.",
+            "name": "employee"
+        },
+        {
+            "classname": "DeviceAssignment",
+            "code": "class DeviceAssignment(Base):\n    \"\"\"\n    description: Track which employee has been assigned to a device.\n    \"\"\"\n    __tablename__ = 'device_assignment'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    employee_id = Column(Integer, ForeignKey('employee.id'))\n    device_id = Column(Integer, ForeignKey('device.id'))\n    start_date = Column(Date)\n    end_date = Column(Date)",
+            "sqlite_create": "CREATE TABLE device_assignment (\nid INTEGER NOT NULL, \nemployee_id INTEGER, \ndevice_id INTEGER, \nstart_date DATE, \nend_date DATE, \nPRIMARY KEY (id), \nFOREIGN KEY(employee_id) REFERENCES employee (id), \nFOREIGN KEY(device_id) REFERENCES device (id)\n)",
+            "description": "Track which employee has been assigned to a device.",
+            "name": "device_assignment"
+        },
+        {
+            "classname": "MaintenanceSchedule",
+            "code": "class MaintenanceSchedule(Base):\n    \"\"\"\n    description: Planned maintenance for devices.\n    \"\"\"\n    __tablename__ = 'maintenance_schedule'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    device_id = Column(Integer, ForeignKey('device.id'))\n    scheduled_date = Column(Date)\n    description = Column(String)",
+            "sqlite_create": "CREATE TABLE maintenance_schedule (\nid INTEGER NOT NULL, \ndevice_id INTEGER, \nscheduled_date DATE, \ndescription VARCHAR, \nPRIMARY KEY (id), \nFOREIGN KEY(device_id) REFERENCES device (id)\n)",
+            "description": "Planned maintenance for devices.",
+            "name": "maintenance_schedule"
+        },
+        {
+            "classname": "VendorContract",
+            "code": "class VendorContract(Base):\n    \"\"\"\n    description: Details of vendor contracts.\n    \"\"\"\n    __tablename__ = 'vendor_contract'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    vendor_name = Column(String)\n    contract_start = Column(Date)\n    contract_end = Column(Date)\n    terms = Column(String)",
+            "sqlite_create": "CREATE TABLE vendor_contract (\nid INTEGER NOT NULL, \nvendor_name VARCHAR, \ncontract_start DATE, \ncontract_end DATE, \nterms VARCHAR, \nPRIMARY KEY (id)\n)",
+            "description": "Details of vendor contracts.",
+            "name": "vendor_contract"
+        },
+        {
+            "classname": "DeviceSoftware",
+            "code": "class DeviceSoftware(Base):\n    \"\"\"\n    description: Links devices with software installations.\n    \"\"\"\n    __tablename__ = 'device_software'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    device_id = Column(Integer, ForeignKey('device.id'))\n    software_id = Column(Integer, ForeignKey('software.id'))\n    installation_date = Column(Date)",
+            "sqlite_create": "CREATE TABLE device_software (\nid INTEGER NOT NULL, \ndevice_id INTEGER, \nsoftware_id INTEGER, \ninstallation_date DATE, \nPRIMARY KEY (id), \nFOREIGN KEY(device_id) REFERENCES device (id), \nFOREIGN KEY(software_id) REFERENCES software (id)\n)",
+            "description": "Links devices with software installations.",
+            "name": "device_software"
+        },
+        {
+            "classname": "ComplianceAudit",
+            "code": "class ComplianceAudit(Base):\n    \"\"\"\n    description: Records audits for compliance tracking.\n    \"\"\"\n    __tablename__ = 'compliance_audit'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    audit_date = Column(Date)\n    findings = Column(String)\n    auditor = Column(String)",
+            "sqlite_create": "CREATE TABLE compliance_audit (\nid INTEGER NOT NULL, \naudit_date DATE, \nfindings VARCHAR, \nauditor VARCHAR, \nPRIMARY KEY (id)\n)",
+            "description": "Records audits for compliance tracking.",
+            "name": "compliance_audit"
+        },
+        {
+            "classname": "WarrantyService",
+            "code": "class WarrantyService(Base):\n    \"\"\"\n    description: Manages details of warranty services for devices.\n    \"\"\"\n    __tablename__ = 'warranty_service'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    device_id = Column(Integer, ForeignKey('device.id'))\n    vendor_contract_id = Column(Integer, ForeignKey('vendor_contract.id'))\n    service_date = Column(Date)\n    service_notes = Column(String)",
+            "sqlite_create": "CREATE TABLE warranty_service (\nid INTEGER NOT NULL, \ndevice_id INTEGER, \nvendor_contract_id INTEGER, \nservice_date DATE, \nservice_notes VARCHAR, \nPRIMARY KEY (id), \nFOREIGN KEY(device_id) REFERENCES device (id), \nFOREIGN KEY(vendor_contract_id) REFERENCES vendor_contract (id)\n)",
+            "description": "Manages details of warranty services for devices.",
+            "name": "warranty_service"
+        },
+        {
+            "classname": "RenewalAlert",
+            "code": "class RenewalAlert(Base):\n    \"\"\"\n    description: Manages renewal alerts for software licenses and contracts.\n    \"\"\"\n    __tablename__ = 'renewal_alert'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    alert_date = Column(Date)\n    entity_type = Column(String)\n    entity_id = Column(Integer)\n    message = Column(String)",
+            "sqlite_create": "CREATE TABLE renewal_alert (\nid INTEGER NOT NULL, \nalert_date DATE, \nentity_type VARCHAR, \nentity_id INTEGER, \nmessage VARCHAR, \nPRIMARY KEY (id)\n)",
+            "description": "Manages renewal alerts for software licenses and contracts.",
+            "name": "renewal_alert"
+        }
+    ],
+    "rules": [],
+    "test_data": "Device Data:\n- device1 = Device(name=\"Workstation A\", manufacturer=\"Dell\", model=\"Optiplex 7070\", purchase_date=date(2020, 5, 15), warranty_expiry=date(2023, 5, 15))\n- device2 = Device(name=\"Laptop B\", manufacturer=\"HP\", model=\"Pavilion 15\", purchase_date=date(2021, 7, 22), warranty_expiry=date(2024, 7, 22))\n- device3 = Device(name=\"Printer C\", manufacturer=\"Brother\", model=\"HL-L2350DW\", purchase_date=date(2019, 10, 1), warranty_expiry=date(2022, 10, 1))\n- device4 = Device(name=\"Server D\", manufacturer=\"IBM\", model=\"Power9\", purchase_date=date(2018, 9, 30), warranty_expiry=date(2023, 9, 30))\n\nSoftware Data:\n- software1 = Software(title=\"Microsoft Office\", version=\"365\", license_expiry=date(2023, 12, 31), vendor=\"Microsoft\")\n- software2 = Software(title=\"Adobe Acrobat Pro\", version=\"2021\", license_expiry=date(2023, 9, 15), vendor=\"Adobe\")\n- software3 = Software(title=\"Zoom\", version=\"5.6.1\", license_expiry=date(2024, 3, 31), vendor=\"Zoom Video Communications\")\n- software4 = Software(title=\"Slack\", version=\"4.15.0\", license_expiry=date(2023, 11, 20), vendor=\"Slack Technologies\")\n\nLocation Data:\n- location1 = Location(name=\"HQ Building\", address=\"123 Main St, Springfield\", country=\"USA\")\n- location2 = Location(name=\"Remote Office\", address=\"456 Elm St, Lincoln\", country=\"USA\")\n- location3 = Location(name=\"Data Center\", address=\"789 Birch Ave, Maple\", country=\"Canada\")\n- location4 = Location(name=\"Branch Office\", address=\"202 Pine St, Oak\", country=\"USA\")\n\n... (similar test data created for remaining tables)",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "device1",
+            "code": "device1 = Device(name=\"Workstation A\", manufacturer=\"Dell\", model=\"Optiplex 7070\", purchase_date=date(2020, 5, 15), warranty_expiry=date(2023, 5, 15))"
+        },
+        {
+            "test_data_row_variable": "device2",
+            "code": "device2 = Device(name=\"Laptop B\", manufacturer=\"HP\", model=\"Pavilion 15\", purchase_date=date(2021, 7, 22), warranty_expiry=date(2024, 7, 22))"
+        },
+        {
+            "test_data_row_variable": "device3",
+            "code": "device3 = Device(name=\"Printer C\", manufacturer=\"Brother\", model=\"HL-L2350DW\", purchase_date=date(2019, 10, 1), warranty_expiry=date(2022, 10, 1))"
+        },
+        {
+            "test_data_row_variable": "device4",
+            "code": "device4 = Device(name=\"Server D\", manufacturer=\"IBM\", model=\"Power9\", purchase_date=date(2018, 9, 30), warranty_expiry=date(2023, 9, 30))"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO device (name, manufacturer, model, purchase_date, warranty_expiry) VALUES ('Workstation A', 'Dell', 'Optiplex 7070', \"<python_date_format>\", \"<python_date_format>\");\nINSERT INTO device (name, manufacturer, model, purchase_date, warranty_expiry) VALUES ('Laptop B', 'HP', 'Pavilion 15', \"<python_date_format>\", \"<python_date_format>\");\n... (similar INSERT statements created for remaining test data rows)",
+    "name": "AssetManagementDB"
+}

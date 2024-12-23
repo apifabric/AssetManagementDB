@@ -1,0 +1,131 @@
+{
+    "models": [
+        {
+            "classname": "User",
+            "code": "class User(Base):\\n    '''description: This table stores user information.'''\\n    __tablename__ = 'users'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    username = Column(String, nullable=False)\\n    email = Column(String, nullable=False)\\n    joined_date = Column(DateTime, nullable=False)\\n    profile_photo_id = Column(Integer, ForeignKey('photos.id'))",
+            "sqlite_create": "CREATE TABLE users (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    username TEXT NOT NULL,\\n    email TEXT NOT NULL,\\n    joined_date TEXT NOT NULL,\\n    profile_photo_id INTEGER,\\n    FOREIGN KEY(profile_photo_id) REFERENCES photos(id)\\n);",
+            "description": "This table stores user information.",
+            "name": "User"
+        },
+        {
+            "classname": "Photo",
+            "code": "class Photo(Base):\\n    '''description: This table stores photo data associated with users.'''\\n    __tablename__ = 'photos'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    url = Column(String, nullable=False)\\n    created_at = Column(DateTime, nullable=False)\\n    description = Column(String)",
+            "sqlite_create": "CREATE TABLE photos (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    url TEXT NOT NULL,\\n    created_at TEXT NOT NULL,\\n    description TEXT\\n);",
+            "description": "This table stores photo data associated with users.",
+            "name": "Photo"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\\n    '''description: This table keeps track of the product details.'''\\n    __tablename__ = 'products'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    price = Column(Decimal, nullable=False)\\n    stock_quantity = Column(Integer, nullable=False)\\n    creation_date = Column(DateTime, nullable=False)",
+            "sqlite_create": "CREATE TABLE products (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    name TEXT NOT NULL,\\n    price NUMERIC NOT NULL,\\n    stock_quantity INTEGER NOT NULL,\\n    creation_date TEXT NOT NULL\\n);",
+            "description": "This table keeps track of the product details.",
+            "name": "Product"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\\n    '''description: This table records user orders.'''\\n    __tablename__ = 'orders'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)\\n    order_date = Column(DateTime, nullable=False)\\n    total_amount = Column(Decimal, nullable=False)\\n    status = Column(String, nullable=False)",
+            "sqlite_create": "CREATE TABLE orders (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    user_id INTEGER NOT NULL,\\n    order_date TEXT NOT NULL,\\n    total_amount NUMERIC NOT NULL,\\n    status TEXT NOT NULL,\\n    FOREIGN KEY(user_id) REFERENCES users(id)\\n);",
+            "description": "This table records user orders.",
+            "name": "Order"
+        },
+        {
+            "classname": "LineItem",
+            "code": "class LineItem(Base):\\n    '''description: This table represents each line item within an order.'''\\n    __tablename__ = 'line_items'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    order_id = Column(Integer, ForeignKey('orders.id'), nullable=False)\\n    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)\\n    quantity = Column(Integer, nullable=False)\\n    price = Column(Decimal, nullable=False)",
+            "sqlite_create": "CREATE TABLE line_items (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    order_id INTEGER NOT NULL,\\n    product_id INTEGER NOT NULL,\\n    quantity INTEGER NOT NULL,\\n    price NUMERIC NOT NULL,\\n    FOREIGN KEY(order_id) REFERENCES orders(id),\\n    FOREIGN KEY(product_id) REFERENCES products(id)\\n);",
+            "description": "This table represents each line item within an order.",
+            "name": "LineItem"
+        },
+        {
+            "classname": "Category",
+            "code": "class Category(Base):\\n    '''description: This table defines product categories.'''\\n    __tablename__ = 'categories'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    description = Column(String)\\n    created_at = Column(DateTime, nullable=False)",
+            "sqlite_create": "CREATE TABLE categories (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    name TEXT NOT NULL,\\n    description TEXT,\\n    created_at TEXT NOT NULL\\n);",
+            "description": "This table defines product categories.",
+            "name": "Category"
+        },
+        {
+            "classname": "ProductCategory",
+            "code": "class ProductCategory(Base):\\n    '''description: Associative table linking products and categories.'''\\n    __tablename__ = 'product_categories'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)\\n    category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)",
+            "sqlite_create": "CREATE TABLE product_categories (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    product_id INTEGER NOT NULL,\\n    category_id INTEGER NOT NULL,\\n    FOREIGN KEY(product_id) REFERENCES products(id),\\n    FOREIGN KEY(category_id) REFERENCES categories(id)\\n);",
+            "description": "Associative table linking products and categories.",
+            "name": "ProductCategory"
+        },
+        {
+            "classname": "Inventory",
+            "code": "class Inventory(Base):\\n    '''description: Represents inventory containing multiple products.'''\\n    __tablename__ = 'inventory'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    location = Column(String, nullable=False)\\n    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)\\n    quantity = Column(Integer, nullable=False)",
+            "sqlite_create": "CREATE TABLE inventory (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    location TEXT NOT NULL,\\n    product_id INTEGER NOT NULL,\\n    quantity INTEGER NOT NULL,\\n    FOREIGN KEY(product_id) REFERENCES products(id)\\n);",
+            "description": "Represents inventory containing multiple products.",
+            "name": "Inventory"
+        },
+        {
+            "classname": "Cart",
+            "code": "class Cart(Base):\\n    '''description: A shopping cart entity for tracking users' selected items.'''\\n    __tablename__ = 'carts'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)\\n    created_at = Column(DateTime, nullable=False)",
+            "sqlite_create": "CREATE TABLE carts (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    user_id INTEGER NOT NULL,\\n    created_at TEXT NOT NULL,\\n    FOREIGN KEY(user_id) REFERENCES users(id)\\n);",
+            "description": "A shopping cart entity for tracking users' selected items.",
+            "name": "Cart"
+        },
+        {
+            "classname": "CartItem",
+            "code": "class CartItem(Base):\\n    '''description: Each product added to a user's cart.'''\\n    __tablename__ = 'cart_items'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    cart_id = Column(Integer, ForeignKey('carts.id'), nullable=False)\\n    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)\\n    quantity = Column(Integer, nullable=False)",
+            "sqlite_create": "CREATE TABLE cart_items (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    cart_id INTEGER NOT NULL,\\n    product_id INTEGER NOT NULL,\\n    quantity INTEGER NOT NULL,\\n    FOREIGN KEY(cart_id) REFERENCES carts(id),\\n    FOREIGN KEY(product_id) REFERENCES products(id)\\n);",
+            "description": "Each product added to a user's cart.",
+            "name": "CartItem"
+        },
+        {
+            "classname": "Review",
+            "code": "class Review(Base):\\n    '''description: Stores reviews users give to products.'''\\n    __tablename__ = 'reviews'\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)\\n    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)\\n    rating = Column(Integer, nullable=False)\\n    comment = Column(String)\\n    review_date = Column(DateTime, nullable=False)",
+            "sqlite_create": "CREATE TABLE reviews (\\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\\n    product_id INTEGER NOT NULL,\\n    user_id INTEGER NOT NULL,\\n    rating INTEGER NOT NULL,\\n    comment TEXT,\\n    review_date TEXT NOT NULL,\\n    FOREIGN KEY(product_id) REFERENCES products(id),\\n    FOREIGN KEY(user_id) REFERENCES users(id)\\n);",
+            "description": "Stores reviews users give to products.",
+            "name": "Review"
+        }
+    ],
+    "rules": [],
+    "test_data": "Sample data entries for each table.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "user1",
+            "code": "user1 = User(username=\"john_doe\", email=\"john@example.com\", joined_date=date(2021, 1, 15))"
+        },
+        {
+            "test_data_row_variable": "photo1",
+            "code": "photo1 = Photo(url=\"https://example.com/image1.jpg\", created_at=date(2021, 1, 10), description=\"Profile Photo\")"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(name=\"Widget\", price=30.00, stock_quantity=100, creation_date=date(2021, 1, 5))"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(user_id=1, order_date=date(2021, 1, 20), total_amount=60.00, status=\"Shipped\")"
+        },
+        {
+            "test_data_row_variable": "line_item1",
+            "code": "line_item1 = LineItem(order_id=1, product_id=1, quantity=2, price=30.00)"
+        },
+        {
+            "test_data_row_variable": "category1",
+            "code": "category1 = Category(name=\"Gadgets\", created_at=date(2021, 1, 3))"
+        },
+        {
+            "test_data_row_variable": "product_category1",
+            "code": "product_category1 = ProductCategory(product_id=1, category_id=1)"
+        },
+        {
+            "test_data_row_variable": "inventory1",
+            "code": "inventory1 = Inventory(location=\"Warehouse A\", product_id=1, quantity=50)"
+        },
+        {
+            "test_data_row_variable": "cart1",
+            "code": "cart1 = Cart(user_id=1, created_at=date(2021, 1, 25))"
+        },
+        {
+            "test_data_row_variable": "cart_item1",
+            "code": "cart_item1 = CartItem(cart_id=1, product_id=1, quantity=1)"
+        },
+        {
+            "test_data_row_variable": "review1",
+            "code": "review1 = Review(product_id=1, user_id=1, rating=5, comment=\"Excellent product!\", review_date=date(2021, 1, 27))"
+        }
+    ],
+    "test_data_sqlite": "-- Sample INSERT statements for the tables.\nINSERT INTO users (username, email, joined_date) VALUES ('john_doe', 'john@example.com', '2021-01-15');\nINSERT INTO photos (url, created_at, description) VALUES ('https://example.com/image1.jpg', '2021-01-10', 'Profile Photo');\nINSERT INTO products (name, price, stock_quantity, creation_date) VALUES ('Widget', 30.00, 100, '2021-01-05');\nINSERT INTO orders (user_id, order_date, total_amount, status) VALUES (1, '2021-01-20', 60.00, 'Shipped');\nINSERT INTO line_items (order_id, product_id, quantity, price) VALUES (1, 1, 2, 30.00);\nINSERT INTO categories (name, created_at) VALUES ('Gadgets', '2021-01-03');\nINSERT INTO product_categories (product_id, category_id) VALUES (1, 1);\nINSERT INTO inventory (location, product_id, quantity) VALUES ('Warehouse A', 1, 50);\nINSERT INTO carts (user_id, created_at) VALUES (1, '2021-01-25');\nINSERT INTO cart_items (cart_id, product_id, quantity) VALUES (1, 1, 1);\nINSERT INTO reviews (product_id, user_id, rating, comment, review_date) VALUES (1, 1, 5, 'Excellent product!', '2021-01-27');",
+    "name": "ECommerceModel"
+}

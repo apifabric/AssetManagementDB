@@ -1,0 +1,286 @@
+{
+    "models": [
+        {
+            "classname": "Device",
+            "code": "class Device(Base):\\n    \\n    __tablename__ = 'device'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    manufacturer_id = Column(Integer, ForeignKey('manufacturer.id'))\\n    purchase_date = Column(DateTime)\\n    warranty_period = Column(Integer)\\n    price = Column(Integer)",
+            "sqlite_create": "CREATE TABLE device (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\nname TEXT NOT NULL,\\nmanufacturer_id INTEGER REFERENCES manufacturer(id),\\npurchase_date DATE,\\nwarranty_period INTEGER,\\nprice INTEGER\\n);",
+            "description": "Description: Contains details about each Device, including manufacturer, purchase date, and price.",
+            "name": "Device"
+        },
+        {
+            "classname": "Manufacturer",
+            "code": "class Manufacturer(Base):\\n\\n    __tablename__ = 'manufacturer'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    contact_email = Column(String)\\n    phone_number = Column(String)",
+            "sqlite_create": "CREATE TABLE manufacturer (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\nname TEXT NOT NULL,\\ncontact_email TEXT,\\nphone_number TEXT\\n);",
+            "description": "Description: Stores information about manufacturing companies, such as name, email, and contact number.",
+            "name": "Manufacturer"
+        },
+        {
+            "classname": "Component",
+            "code": "class Component(Base):\\n\\n    __tablename__ = 'component'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    device_id = Column(Integer, ForeignKey('device.id'))\\n    component_type = Column(String, nullable=False)\\n    description = Column(String)\\n    serial_number = Column(String)",
+            "sqlite_create": "CREATE TABLE component (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\ndevice_id INTEGER REFERENCES device(id),\\ncomponent_type TEXT NOT NULL,\\ndescription TEXT,\\nserial_number TEXT\\n);",
+            "description": "Description: Lists components of each device with type, description, and serial numbers.",
+            "name": "Component"
+        },
+        {
+            "classname": "MaintenanceRecord",
+            "code": "class MaintenanceRecord(Base):\\n\\n    __tablename__ = 'maintenance_record'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    device_id = Column(Integer, ForeignKey('device.id'))\\n    maintenance_date = Column(DateTime)\\n    summary = Column(String)\\n    cost = Column(Integer)",
+            "sqlite_create": "CREATE TABLE maintenance_record (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\ndevice_id INTEGER REFERENCES device(id),\\nmaintenance_date DATE,\\nsummary TEXT,\\ncost INTEGER\\n);",
+            "description": "Description: Records all maintenance activities performed on devices with associated costs.",
+            "name": "MaintenanceRecord"
+        },
+        {
+            "classname": "User",
+            "code": "class User(Base):\\n\\n    __tablename__ = 'user'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    username = Column(String, nullable=False)\\n    email = Column(String)\\n    password_hash = Column(String)\\n    signup_date = Column(DateTime, nullable=False)",
+            "sqlite_create": "CREATE TABLE user (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\nusername TEXT NOT NULL,\\nemail TEXT,\\npassword_hash TEXT,\\nsignup_date DATE NOT NULL\\n);",
+            "description": "Description: Stores user information such as username, email, and the date they signed up.",
+            "name": "User"
+        },
+        {
+            "classname": "Role",
+            "code": "class Role(Base):\\n\\n    __tablename__ = 'role'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    role_name = Column(String, nullable=False)\\n    description = Column(String)",
+            "sqlite_create": "CREATE TABLE role (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\nrole_name TEXT NOT NULL,\\ndescription TEXT\\n);",
+            "description": "Description: Contains roles that can be assigned to users, defining their access levels.",
+            "name": "Role"
+        },
+        {
+            "classname": "UserRole",
+            "code": "class UserRole(Base):\\n\\n    __tablename__ = 'user_role'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    user_id = Column(Integer, ForeignKey('user.id'))\\n    role_id = Column(Integer, ForeignKey('role.id'))",
+            "sqlite_create": "CREATE TABLE user_role (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\nuser_id INTEGER REFERENCES user(id),\\nrole_id INTEGER REFERENCES role(id)\\n);",
+            "description": "Description: Maps users to roles to control their permissions and access rights.",
+            "name": "UserRole"
+        },
+        {
+            "classname": "Project",
+            "code": "class Project(Base):\\n\\n    __tablename__ = 'project'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    description = Column(String)\\n    start_date = Column(DateTime)",
+            "sqlite_create": "CREATE TABLE project (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\nname TEXT NOT NULL,\\ndescription TEXT,\\nstart_date DATE\\n);",
+            "description": "Description: Details the projects in which devices or components might be involved, including start dates.",
+            "name": "Project"
+        },
+        {
+            "classname": "ProjectAssignment",
+            "code": "class ProjectAssignment(Base):\\n\\n    __tablename__ = 'project_assignment'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    device_id = Column(Integer, ForeignKey('device.id'))\\n    project_id = Column(Integer, ForeignKey('project.id'))",
+            "sqlite_create": "CREATE TABLE project_assignment (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\ndevice_id INTEGER REFERENCES device(id),\\nproject_id INTEGER REFERENCES project(id)\\n);",
+            "description": "Description: Allocates devices to specific projects for tracking usage and availability.",
+            "name": "ProjectAssignment"
+        },
+        {
+            "classname": "Vendor",
+            "code": "class Vendor(Base):\\n\\n    __tablename__ = 'vendor'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    name = Column(String, nullable=False)\\n    contact_info = Column(String)\\n    address = Column(String)",
+            "sqlite_create": "CREATE TABLE vendor (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\nname TEXT NOT NULL,\\ncontact_info TEXT,\\naddress TEXT\\n);",
+            "description": "Description: Catalogs all suppliers/provider details who supply the components or devices.",
+            "name": "Vendor"
+        },
+        {
+            "classname": "DeviceVendor",
+            "code": "class DeviceVendor(Base):\\n\\n    __tablename__ = 'device_vendor'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    device_id = Column(Integer, ForeignKey('device.id'))\\n    vendor_id = Column(Integer, ForeignKey('vendor.id'))\\n    supplied_date = Column(DateTime)\\n    delivery_status = Column(String)",
+            "sqlite_create": "CREATE TABLE device_vendor (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\ndevice_id INTEGER REFERENCES device(id),\\nvendor_id INTEGER REFERENCES vendor(id),\\nsupplied_date DATE,\\ndelivery_status TEXT\\n);",
+            "description": "Description: Details partnerships with various vendors for component/device supply and delivery status checks.",
+            "name": "DeviceVendor"
+        },
+        {
+            "classname": "AuditLog",
+            "code": "class AuditLog(Base):\\n\\n    __tablename__ = 'audit_log'\\n\\n    id = Column(Integer, primary_key=True, autoincrement=True)\\n    action = Column(String, nullable=False)\\n    timestamp = Column(DateTime, nullable=False)\\n    user_id = Column(Integer, ForeignKey('user.id'))\\n    description = Column(String)",
+            "sqlite_create": "CREATE TABLE audit_log (\\nid INTEGER PRIMARY KEY AUTOINCREMENT,\\naction TEXT NOT NULL,\\ntimestamp DATE NOT NULL,\\nuser_id INTEGER REFERENCES user(id),\\ndescription TEXT\\n);",
+            "description": "Description: Captures all actions performed within the database system, recording timestamps and user actions.",
+            "name": "AuditLog"
+        }
+    ],
+    "rules": [],
+    "test_data": "",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "device_1",
+            "code": "device_1 = Device(name=\"Device A\", manufacturer_id=1, purchase_date=date(2022, 3, 15), warranty_period=12, price=500)"
+        },
+        {
+            "test_data_row_variable": "device_2",
+            "code": "device_2 = Device(name=\"Device B\", manufacturer_id=2, purchase_date=date(2023, 5, 21), warranty_period=24, price=1000)"
+        },
+        {
+            "test_data_row_variable": "device_3",
+            "code": "device_3 = Device(name=\"Device C\", manufacturer_id=1, purchase_date=date(2021, 11, 30), warranty_period=18, price=750)"
+        },
+        {
+            "test_data_row_variable": "device_4",
+            "code": "device_4 = Device(name=\"Device D\", manufacturer_id=3, purchase_date=date(2020, 1, 5), warranty_period=36, price=1500)"
+        },
+        {
+            "test_data_row_variable": "manufacturer_1",
+            "code": "manufacturer_1 = Manufacturer(name=\"Manufacturer X\", contact_email=\"contact@manufacturerx.com\", phone_number=\"123-456-7890\")"
+        },
+        {
+            "test_data_row_variable": "manufacturer_2",
+            "code": "manufacturer_2 = Manufacturer(name=\"Manufacturer Y\", contact_email=\"contact@manufacturery.com\", phone_number=\"987-654-3210\")"
+        },
+        {
+            "test_data_row_variable": "manufacturer_3",
+            "code": "manufacturer_3 = Manufacturer(name=\"Manufacturer Z\", contact_email=\"contact@manufacturerz.com\", phone_number=\"456-789-1230\")"
+        },
+        {
+            "test_data_row_variable": "manufacturer_4",
+            "code": "manufacturer_4 = Manufacturer(name=\"Manufacturer W\", contact_email=\"contact@manufacturerw.com\", phone_number=\"321-654-9870\")"
+        },
+        {
+            "test_data_row_variable": "component_1",
+            "code": "component_1 = Component(device_id=1, component_type=\"CPU\", description=\"Intel i7\", serial_number=\"SN123456\")"
+        },
+        {
+            "test_data_row_variable": "component_2",
+            "code": "component_2 = Component(device_id=2, component_type=\"GPU\", description=\"NVIDIA GTX 2080\", serial_number=\"SN789101\")"
+        },
+        {
+            "test_data_row_variable": "component_3",
+            "code": "component_3 = Component(device_id=3, component_type=\"RAM\", description=\"16GB DDR4\", serial_number=\"SN111213\")"
+        },
+        {
+            "test_data_row_variable": "component_4",
+            "code": "component_4 = Component(device_id=4, component_type=\"SSD\", description=\"Samsung 1TB\", serial_number=\"SN141516\")"
+        },
+        {
+            "test_data_row_variable": "maintenance_record_1",
+            "code": "maintenance_record_1 = MaintenanceRecord(device_id=1, maintenance_date=date(2023, 8, 5), summary=\"Annual checkup\", cost=100)"
+        },
+        {
+            "test_data_row_variable": "maintenance_record_2",
+            "code": "maintenance_record_2 = MaintenanceRecord(device_id=1, maintenance_date=date(2023, 2, 16), summary=\"Replaced battery\", cost=50)"
+        },
+        {
+            "test_data_row_variable": "maintenance_record_3",
+            "code": "maintenance_record_3 = MaintenanceRecord(device_id=2, maintenance_date=date(2023, 7, 23), summary=\"Replaced GPU\", cost=300)"
+        },
+        {
+            "test_data_row_variable": "maintenance_record_4",
+            "code": "maintenance_record_4 = MaintenanceRecord(device_id=3, maintenance_date=date(2023, 1, 9), summary=\"Upgraded RAM\", cost=150)"
+        },
+        {
+            "test_data_row_variable": "user_1",
+            "code": "user_1 = User(username=\"jdoe\", email=\"jdoe@example.com\", password_hash=\"hashed_pwd_1\", signup_date=date(2022, 6, 14))"
+        },
+        {
+            "test_data_row_variable": "user_2",
+            "code": "user_2 = User(username=\"asmith\", email=\"asmith@example.com\", password_hash=\"hashed_pwd_2\", signup_date=date(2023, 7, 20))"
+        },
+        {
+            "test_data_row_variable": "user_3",
+            "code": "user_3 = User(username=\"bkumar\", email=\"bkumar@example.com\", password_hash=\"hashed_pwd_3\", signup_date=date(2021, 2, 5))"
+        },
+        {
+            "test_data_row_variable": "user_4",
+            "code": "user_4 = User(username=\"mlara\", email=\"mlara@example.com\", password_hash=\"hashed_pwd_4\", signup_date=date(2020, 12, 24))"
+        },
+        {
+            "test_data_row_variable": "role_1",
+            "code": "role_1 = Role(role_name=\"Admin\", description=\"System administrator\")"
+        },
+        {
+            "test_data_row_variable": "role_2",
+            "code": "role_2 = Role(role_name=\"Manager\", description=\"Operations Manager\")"
+        },
+        {
+            "test_data_row_variable": "role_3",
+            "code": "role_3 = Role(role_name=\"Technician\", description=\"Field Technician\")"
+        },
+        {
+            "test_data_row_variable": "role_4",
+            "code": "role_4 = Role(role_name=\"Viewer\", description=\"Data Viewer\")"
+        },
+        {
+            "test_data_row_variable": "user_role_1",
+            "code": "user_role_1 = UserRole(user_id=1, role_id=1)"
+        },
+        {
+            "test_data_row_variable": "user_role_2",
+            "code": "user_role_2 = UserRole(user_id=2, role_id=2)"
+        },
+        {
+            "test_data_row_variable": "user_role_3",
+            "code": "user_role_3 = UserRole(user_id=3, role_id=3)"
+        },
+        {
+            "test_data_row_variable": "user_role_4",
+            "code": "user_role_4 = UserRole(user_id=4, role_id=4)"
+        },
+        {
+            "test_data_row_variable": "project_1",
+            "code": "project_1 = Project(name=\"Project Alpha\", description=\"Initial Phase\", start_date=date(2022, 1, 10))"
+        },
+        {
+            "test_data_row_variable": "project_2",
+            "code": "project_2 = Project(name=\"Project Bravo\", description=\"Development\", start_date=date(2022, 8, 5))"
+        },
+        {
+            "test_data_row_variable": "project_3",
+            "code": "project_3 = Project(name=\"Project Charlie\", description=\"Testing\", start_date=date(2023, 3, 20))"
+        },
+        {
+            "test_data_row_variable": "project_4",
+            "code": "project_4 = Project(name=\"Project Delta\", description=\"Deployment\", start_date=date(2023, 11, 1))"
+        },
+        {
+            "test_data_row_variable": "project_assignment_1",
+            "code": "project_assignment_1 = ProjectAssignment(device_id=1, project_id=1)"
+        },
+        {
+            "test_data_row_variable": "project_assignment_2",
+            "code": "project_assignment_2 = ProjectAssignment(device_id=2, project_id=2)"
+        },
+        {
+            "test_data_row_variable": "project_assignment_3",
+            "code": "project_assignment_3 = ProjectAssignment(device_id=3, project_id=3)"
+        },
+        {
+            "test_data_row_variable": "project_assignment_4",
+            "code": "project_assignment_4 = ProjectAssignment(device_id=4, project_id=4)"
+        },
+        {
+            "test_data_row_variable": "vendor_1",
+            "code": "vendor_1 = Vendor(name=\"Vendor X\", contact_info=\"vendorx@example.com\", address=\"123 Main St\")"
+        },
+        {
+            "test_data_row_variable": "vendor_2",
+            "code": "vendor_2 = Vendor(name=\"Vendor Y\", contact_info=\"vendory@example.com\", address=\"456 Broadway Ave\")"
+        },
+        {
+            "test_data_row_variable": "vendor_3",
+            "code": "vendor_3 = Vendor(name=\"Vendor Z\", contact_info=\"vendorz@example.com\", address=\"789 Elm St\")"
+        },
+        {
+            "test_data_row_variable": "vendor_4",
+            "code": "vendor_4 = Vendor(name=\"Vendor W\", contact_info=\"vendorw@example.com\", address=\"321 Spruce Dr\")"
+        },
+        {
+            "test_data_row_variable": "device_vendor_1",
+            "code": "device_vendor_1 = DeviceVendor(device_id=1, vendor_id=1, supplied_date=date(2021, 7, 21), delivery_status=\"Delivered\")"
+        },
+        {
+            "test_data_row_variable": "device_vendor_2",
+            "code": "device_vendor_2 = DeviceVendor(device_id=2, vendor_id=2, supplied_date=date(2023, 6, 30), delivery_status=\"Pending\")"
+        },
+        {
+            "test_data_row_variable": "device_vendor_3",
+            "code": "device_vendor_3 = DeviceVendor(device_id=3, vendor_id=3, supplied_date=date(2020, 10, 15), delivery_status=\"Delivered\")"
+        },
+        {
+            "test_data_row_variable": "device_vendor_4",
+            "code": "device_vendor_4 = DeviceVendor(device_id=4, vendor_id=4, supplied_date=date(2022, 2, 12), delivery_status=\"Back Ordered\")"
+        },
+        {
+            "test_data_row_variable": "audit_log_1",
+            "code": "audit_log_1 = AuditLog(action=\"Login\", timestamp=date(2023, 4, 15), user_id=1, description=\"User login successful\")"
+        },
+        {
+            "test_data_row_variable": "audit_log_2",
+            "code": "audit_log_2 = AuditLog(action=\"Update\", timestamp=date(2023, 5, 10), user_id=2, description=\"Updated device details\")"
+        },
+        {
+            "test_data_row_variable": "audit_log_3",
+            "code": "audit_log_3 = AuditLog(action=\"Delete\", timestamp=date(2023, 7, 25), user_id=3, description=\"Deleted component record\")"
+        },
+        {
+            "test_data_row_variable": "audit_log_4",
+            "code": "audit_log_4 = AuditLog(action=\"Create\", timestamp=date(2023, 8, 11), user_id=4, description=\"Created new project\")"
+        }
+    ],
+    "test_data_sqlite": "",
+    "name": "CMDB System"
+}

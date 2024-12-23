@@ -1,0 +1,331 @@
+about:
+  date: December 23, 2024 20:34:20
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 10
+  number_tables: 12
+info_toggle_checked: true
+resources:
+  AssetManagementLog:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: device_id
+    - name: from_location_id
+    - name: to_location_id
+    - name: log_date
+      type: DATE
+    - name: activity
+    description: Log of asset movement and status changes.
+    info_list: Log of asset movement and status changes.
+    tab_groups:
+    - direction: toone
+      fks:
+      - device_id
+      name: device
+      resource: Device
+    - direction: toone
+      fks:
+      - from_location_id
+      name: from_location
+      resource: Location
+    - direction: toone
+      fks:
+      - to_location_id
+      name: to_location
+      resource: Location
+    type: AssetManagementLog
+    user_key: id
+  ComplianceAudit:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: audit_date
+      type: DATE
+    - name: findings
+    - name: auditor
+    description: Records audits for compliance tracking.
+    info_list: Records audits for compliance tracking.
+    type: ComplianceAudit
+    user_key: id
+  Device:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: manufacturer
+    - name: model
+    - name: purchase_date
+      type: DATE
+    - name: warranty_expiry
+      type: DATE
+    - name: id
+    description: Stores information about IT devices in the system.
+    info_list: Stores information about IT devices in the system.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - device_id
+      name: AssetManagementLogList
+      resource: AssetManagementLog
+    - direction: tomany
+      fks:
+      - device_id
+      name: DeviceAssignmentList
+      resource: DeviceAssignment
+    - direction: tomany
+      fks:
+      - device_id
+      name: DeviceSoftwareList
+      resource: DeviceSoftware
+    - direction: tomany
+      fks:
+      - device_id
+      name: MaintenanceScheduleList
+      resource: MaintenanceSchedule
+    - direction: tomany
+      fks:
+      - device_id
+      name: WarrantyServiceList
+      resource: WarrantyService
+    type: Device
+    user_key: name
+  DeviceAssignment:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: device_id
+    - name: employee_id
+    - name: start_date
+      type: DATE
+    - name: end_date
+      type: DATE
+    description: Track which employee has been assigned to a device.
+    info_list: Track which employee has been assigned to a device.
+    tab_groups:
+    - direction: toone
+      fks:
+      - device_id
+      name: device
+      resource: Device
+    - direction: toone
+      fks:
+      - employee_id
+      name: employee
+      resource: Employee
+    type: DeviceAssignment
+    user_key: id
+  DeviceSoftware:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: device_id
+    - name: software_id
+    - name: installation_date
+      type: DATE
+    description: Links devices with software installations.
+    info_list: Links devices with software installations.
+    tab_groups:
+    - direction: toone
+      fks:
+      - device_id
+      name: device
+      resource: Device
+    - direction: toone
+      fks:
+      - software_id
+      name: software
+      resource: Software
+    type: DeviceSoftware
+    user_key: id
+  Employee:
+    attributes:
+    - label: ' first_name*'
+      name: first_name
+      search: true
+      sort: true
+    - name: last_name
+    - name: position
+    - name: email
+    - name: id
+    description: Contains employee details.
+    info_list: Contains employee details.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - employee_id
+      name: DeviceAssignmentList
+      resource: DeviceAssignment
+    type: Employee
+    user_key: first_name
+  Location:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: address
+    - name: country
+    - name: id
+    description: Represents the physical location or premises related to assets.
+    info_list: Represents the physical location or premises related to assets.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - from_location_id
+      name: AssetManagementLogList
+      resource: AssetManagementLog
+    - direction: tomany
+      fks:
+      - to_location_id
+      name: toAssetManagementLogList
+      resource: AssetManagementLog
+    type: Location
+    user_key: name
+  MaintenanceSchedule:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: device_id
+    - name: scheduled_date
+      type: DATE
+    - name: id
+    description: Planned maintenance for devices.
+    info_list: Planned maintenance for devices.
+    tab_groups:
+    - direction: toone
+      fks:
+      - device_id
+      name: device
+      resource: Device
+    type: MaintenanceSchedule
+    user_key: description
+  RenewalAlert:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: alert_date
+      type: DATE
+    - name: entity_type
+    - name: message
+    - name: entity_id
+    description: Manages renewal alerts for software licenses and contracts.
+    info_list: Manages renewal alerts for software licenses and contracts.
+    type: RenewalAlert
+    user_key: id
+  Software:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: title
+    - name: version
+    - name: license_expiry
+      type: DATE
+    - name: vendor
+    description: Contains details about software available in the system.
+    info_list: Contains details about software available in the system.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - software_id
+      name: DeviceSoftwareList
+      resource: DeviceSoftware
+    type: Software
+    user_key: id
+  VendorContract:
+    attributes:
+    - label: ' vendor_name*'
+      name: vendor_name
+      search: true
+      sort: true
+    - name: contract_start
+      type: DATE
+    - name: terms
+    - name: id
+    - name: contract_end
+      type: DATE
+    description: Details of vendor contracts.
+    info_list: Details of vendor contracts.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - vendor_contract_id
+      name: WarrantyServiceList
+      resource: WarrantyService
+    type: VendorContract
+    user_key: vendor_name
+  WarrantyService:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: device_id
+    - name: vendor_contract_id
+    - name: service_date
+      type: DATE
+    - name: service_notes
+    description: Manages details of warranty services for devices.
+    info_list: Manages details of warranty services for devices.
+    tab_groups:
+    - direction: toone
+      fks:
+      - device_id
+      name: device
+      resource: Device
+    - direction: toone
+      fks:
+      - vendor_contract_id
+      name: vendor_contract
+      resource: VendorContract
+    type: WarrantyService
+    user_key: id
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'
